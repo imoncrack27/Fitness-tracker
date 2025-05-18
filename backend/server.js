@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
+import authRoutes from "./routes/auth.js";
+
 dotenv.config();
 
 const app = express();
@@ -12,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes (we'll create these files soon)
-//app.use("/api/auth", require("./routes/auth"));
+app.use("/api/auth", authRoutes);
 //app.use("/api/workouts", require("./routes/workouts"));
 
 // Connect to MongoDB and start server
