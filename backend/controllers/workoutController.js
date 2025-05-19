@@ -19,6 +19,7 @@ export const createWorkout = async (req, res) => {
 
     res.status(201).json(workout);
   } catch (err) {
+    console.log("Error in createWorkout controller:", err.message);
     res
       .status(500)
       .json({ message: "Failed to create workout", error: err.message });
@@ -33,6 +34,7 @@ export const getWorkouts = async (req, res) => {
     });
     res.status(200).json(workouts);
   } catch (err) {
+    console.log("Error in getWorkouts controller:", err.message);
     res
       .status(500)
       .json({ message: "Failed to fetch workouts", error: err.message });
