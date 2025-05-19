@@ -8,8 +8,12 @@ export const AuthProvider = ({ children }) => {
 
   // Load user/token from localStorage on app start
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    const rawUser = localStorage.getItem("user");
+    const storedUser =
+      rawUser && rawUser !== "undefined" ? JSON.parse(rawUser) : null;
+
+    const rawToken = localStorage.getItem("token");
+    const storedToken = rawToken && rawToken !== "undefined" ? rawToken : null;
 
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
