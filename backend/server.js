@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.js";
+import workoutRoutes from "./routes/workouts.js";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(express.json());
 
 // Routes (we'll create these files soon)
 app.use("/api/auth", authRoutes);
-//app.use("/api/workouts", require("./routes/workouts"));
+app.use("/api/workouts", workoutRoutes);
 
 // Connect to MongoDB and start server
 mongoose
