@@ -6,8 +6,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  //const navigate = useNavigate(); // ✅ hook must be used inside the component
 
-  // Load user/token from localStorage when the app starts
+  // Load from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
@@ -18,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Login and save to localStorage
   const login = (userData, token) => {
     setUser(userData);
     setToken(token);
@@ -26,15 +26,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", token);
   };
 
-  // Logout and redirect to login page
   const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-
-    const navigate = useNavigate();
-    navigate("/login"); // ✅ correct way to redirect
+    //navigate("/login"); // ✅ works now
   };
 
   return (
@@ -44,5 +41,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to access AuthContext
 export const useAuth = () => useContext(AuthContext);
