@@ -40,7 +40,9 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Welcome Back to Viking's Fitness Tracker 🏋️
+          </h1>
           <p className="text-sm text-gray-500 mt-1">Login to your account</p>
         </div>
 
