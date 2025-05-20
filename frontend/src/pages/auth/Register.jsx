@@ -4,12 +4,13 @@ import * as z from "zod";
 import API from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-hot-toast";
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["user", "admin"], { required_error: "Role is required" }),
+  // role: z.enum(["user", "admin"], { required_error: "Role is required" }),
 });
 
 function Register() {
@@ -29,10 +30,11 @@ function Register() {
       const res = await API.post("auth/register", data);
       const { user, token } = res.data;
       login(user, token);
+      toast.success("Registration successful! Redirecting...");
       navigate("/login"); // Go to dashboard after register
     } catch (err) {
       console.error(err.response?.data || err.message);
-      alert("Registration failed.");
+      toast.error("Registration failed. Please try again.");
     }
   };
 
@@ -76,7 +78,7 @@ function Register() {
           )}
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium">Role</label>
           <select
             {...register("role")}
@@ -92,7 +94,7 @@ function Register() {
           {errors.role && (
             <p className="text-red-500 text-sm">{errors.role.message}</p>
           )}
-        </div>
+        </div> */}
 
         <button
           type="submit"
