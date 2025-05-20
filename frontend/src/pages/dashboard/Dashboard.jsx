@@ -5,9 +5,19 @@ import WorkoutForm from "../../components/WorkoutForm";
 import toast from "react-hot-toast";
 
 function Dashboard() {
-  const { token, logout } = useAuth();
+  const { token } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState("all");
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  const filteredWorkouts = workouts
+    .filter((w) => filterType === "all" || w.type === filterType)
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+    });
 
   const fetchWorkouts = async () => {
     try {
@@ -41,6 +51,34 @@ function Dashboard() {
       <main className="max-w-3xl mx-auto space-y-6">
         <WorkoutForm onWorkoutAdded={fetchWorkouts} />
 
+        {/* Filter/Sort Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex gap-2">
+            <label className="text-sm font-medium text-gray-700">Filter:</label>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="border border-gray-300 rounded p-2"
+            >
+              <option value="all">All</option>
+              <option value="strength">Strength</option>
+              <option value="cardio">Cardio</option>
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <label className="text-sm font-medium text-gray-700">Sort:</label>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="border border-gray-300 rounded p-2"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+        </div>
+
         {/* Workouts List */}
         <section className="mt-6">
           {loading ? (
@@ -49,7 +87,7 @@ function Dashboard() {
             <p className="text-center text-gray-400">No workouts yet.</p>
           ) : (
             <ul className="space-y-4">
-              {workouts.map((w) => (
+              {filteredWorkouts.map((w) => (
                 <li
                   key={w._id}
                   className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
