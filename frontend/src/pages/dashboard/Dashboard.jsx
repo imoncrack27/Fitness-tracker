@@ -35,12 +35,6 @@ function Dashboard() {
       {/* Header */}
       <header className="flex justify-between items-center mb-6 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-        <button
-          onClick={logout}
-          className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-        >
-          Logout
-        </button>
       </header>
 
       {/* Main Container */}
