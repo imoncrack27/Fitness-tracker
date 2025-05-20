@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -6,21 +7,18 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // Load user/token from localStorage on app start
+  // Load user/token from localStorage when the app starts
   useEffect(() => {
-    const rawUser = localStorage.getItem("user");
-    const storedUser =
-      rawUser && rawUser !== "undefined" ? JSON.parse(rawUser) : null;
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-    const rawToken = localStorage.getItem("token");
-    const storedToken = rawToken && rawToken !== "undefined" ? rawToken : null;
-
-    if (storedUser && storedToken) {
+    if (storedUser && storedToken && storedUser !== "undefined") {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
     }
   }, []);
 
+  // Login and save to localStorage
   const login = (userData, token) => {
     setUser(userData);
     setToken(token);
@@ -28,11 +26,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", token);
   };
 
+  // Logout and redirect to login page
   const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+
+    const navigate = useNavigate();
+    navigate("/login"); // ✅ correct way to redirect
   };
 
   return (
@@ -42,5 +44,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use Auth
+// Custom hook to access AuthContext
 export const useAuth = () => useContext(AuthContext);

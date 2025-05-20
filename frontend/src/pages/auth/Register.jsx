@@ -101,6 +101,16 @@ function Register() {
         >
           {isSubmitting ? "Registering..." : "Register"}
         </button>
+
+        <div className="text-center text-sm text-gray-500">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Login
+          </a>
+        </div>
       </form>
     </div>
   );
