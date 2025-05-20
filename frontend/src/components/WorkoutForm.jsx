@@ -2,10 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import API from "../services/api";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
 
-const workoutSchema = z.object({
+const schema = z.object({
   type: z.enum(["strength", "cardio"]),
   name: z.string().min(1, "Name is required"),
   sets: z.number().optional(),
@@ -17,32 +17,30 @@ const workoutSchema = z.object({
 
 function WorkoutForm({ onWorkoutAdded }) {
   const { token } = useAuth();
-  const [type, setType] = useState("strength");
 
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(workoutSchema),
-    defaultValues: {
-      type: "strength",
-    },
+    resolver: zodResolver(schema),
+    defaultValues: { type: "strength" },
   });
+
+  const type = watch("type");
 
   const onSubmit = async (data) => {
     try {
       await API.post("/workouts", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
+      toast.success("Workout logged!");
       reset();
-      onWorkoutAdded?.(); // callback to refresh dashboard
+      onWorkoutAdded();
     } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert("Workout creation failed.");
+      toast.error("Failed to log workout.");
     }
   };
 
@@ -51,21 +49,14 @@ function WorkoutForm({ onWorkoutAdded }) {
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white p-4 rounded shadow space-y-4"
     >
-      <h2 className="text-xl font-semibold">Log New Workout</h2>
+      <h2 className="text-xl font-semibold">Log Workout</h2>
 
       <div>
         <label className="block text-sm font-medium">Type</label>
-        <select
-          {...register("type")}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
+        <select {...register("type")} className="w-full border p-2 rounded">
           <option value="strength">Strength</option>
           <option value="cardio">Cardio</option>
         </select>
-        {errors.type && (
-          <p className="text-red-500 text-sm">{errors.type.message}</p>
-        )}
       </div>
 
       <div>
@@ -78,60 +69,52 @@ function WorkoutForm({ onWorkoutAdded }) {
 
       {type === "strength" && (
         <>
-          <div>
-            <label className="block text-sm font-medium">Sets</label>
+          <div className="flex gap-2">
             <input
               type="number"
+              placeholder="Sets"
               {...register("sets", { valueAsNumber: true })}
               className="w-full border p-2 rounded"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Reps</label>
             <input
               type="number"
+              placeholder="Reps"
               {...register("reps", { valueAsNumber: true })}
               className="w-full border p-2 rounded"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium">Weight (kg)</label>
-            <input
-              type="number"
-              {...register("weight", { valueAsNumber: true })}
-              className="w-full border p-2 rounded"
-            />
-          </div>
+          <input
+            type="number"
+            placeholder="Weight (kg)"
+            {...register("weight", { valueAsNumber: true })}
+            className="w-full border p-2 rounded"
+          />
         </>
       )}
 
       {type === "cardio" && (
         <>
-          <div>
-            <label className="block text-sm font-medium">Duration (mins)</label>
-            <input
-              type="number"
-              {...register("duration", { valueAsNumber: true })}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Distance (km)</label>
-            <input
-              type="number"
-              {...register("distance", { valueAsNumber: true })}
-              className="w-full border p-2 rounded"
-            />
-          </div>
+          <input
+            type="number"
+            placeholder="Duration (minutes)"
+            {...register("duration", { valueAsNumber: true })}
+            className="w-full border p-2 rounded"
+          />
+          <input
+            type="number"
+            placeholder="Distance (km)"
+            {...register("distance", { valueAsNumber: true })}
+            className="w-full border p-2 rounded"
+          />
         </>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-blue-600 text-white p-2 w-full rounded hover:bg-blue-700 transition"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {isSubmitting ? "Saving..." : "Save Workout"}
+        {isSubmitting ? "Logging..." : "Add Workout"}
       </button>
     </form>
   );
