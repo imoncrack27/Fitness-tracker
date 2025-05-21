@@ -1,9 +1,11 @@
+// WorkoutForm.jsx
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import API from "../services/api";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 
 const schema = z.object({
   type: z.enum(["strength", "cardio"]),
@@ -15,8 +17,9 @@ const schema = z.object({
   distance: z.number().optional(),
 });
 
-function WorkoutForm({ onWorkoutAdded }) {
+function WorkoutForm({ onWorkoutAdded, workoutToEdit = null }) {
   const { token } = useAuth();
+  const isEditMode = Boolean(workoutToEdit);
 
   const {
     register,
@@ -31,16 +34,26 @@ function WorkoutForm({ onWorkoutAdded }) {
 
   const type = watch("type");
 
+  useEffect(() => {
+    if (isEditMode) {
+      reset(workoutToEdit);
+    }
+  }, [isEditMode, workoutToEdit, reset]);
+
   const onSubmit = async (data) => {
     try {
-      await API.post("/workouts", data, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success("Workout logged!");
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      if (isEditMode) {
+        await API.put(`/workouts/${workoutToEdit._id}`, data, config);
+        toast.success("Workout updated!");
+      } else {
+        await API.post("/workouts", data, config);
+        toast.success("Workout logged!");
+      }
       reset();
       onWorkoutAdded();
     } catch (err) {
-      toast.error("Failed to log workout.");
+      toast.error("Failed to save workout.");
     }
   };
 
@@ -49,8 +62,11 @@ function WorkoutForm({ onWorkoutAdded }) {
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white p-4 rounded shadow space-y-4"
     >
-      <h2 className="text-xl font-semibold">Log Workout</h2>
+      <h2 className="text-xl font-semibold">
+        {isEditMode ? "Update Workout" : "Log Workout"}
+      </h2>
 
+      {/* Type Select */}
       <div>
         <label className="block text-sm font-medium">Type</label>
         <select {...register("type")} className="w-full border p-2 rounded">
@@ -59,6 +75,7 @@ function WorkoutForm({ onWorkoutAdded }) {
         </select>
       </div>
 
+      {/* Name */}
       <div>
         <label className="block text-sm font-medium">Name</label>
         <input {...register("name")} className="w-full border p-2 rounded" />
@@ -67,6 +84,7 @@ function WorkoutForm({ onWorkoutAdded }) {
         )}
       </div>
 
+      {/* Conditional Fields */}
       {type === "strength" && (
         <>
           <div className="flex gap-2">
@@ -114,7 +132,13 @@ function WorkoutForm({ onWorkoutAdded }) {
         disabled={isSubmitting}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {isSubmitting ? "Logging..." : "Add Workout"}
+        {isSubmitting
+          ? isEditMode
+            ? "Updating..."
+            : "Logging..."
+          : isEditMode
+            ? "Update Workout"
+            : "Add Workout"}
       </button>
     </form>
   );

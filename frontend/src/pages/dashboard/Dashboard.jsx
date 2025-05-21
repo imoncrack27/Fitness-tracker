@@ -2,37 +2,41 @@ import { useEffect, useState } from "react";
 import API from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import WorkoutForm from "../../components/WorkoutForm";
+import EditWorkoutModal from "../../components/EditWorkoutModal"; // <-- Import modal
 import toast from "react-hot-toast";
 
 function Dashboard() {
   const { token } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterType, setFilterType] = useState("all");
-  const [sortOrder, setSortOrder] = useState("newest");
-
-  const filteredWorkouts = workouts
-    .filter((w) => filterType === "all" || w.type === filterType)
-    .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
-    });
+  const [editingWorkout, setEditingWorkout] = useState(null);
+  const [sortOption, setSortOption] = useState("date-desc");
 
   const fetchWorkouts = async () => {
     try {
       setLoading(true);
       const res = await API.get("/workouts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setWorkouts(res.data);
     } catch (err) {
-      console.error("Failed to fetch workouts", err);
       toast.error("Failed to load workouts.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this workout?"))
+      return;
+    try {
+      await API.delete(`/workouts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Workout deleted.");
+      fetchWorkouts();
+    } catch (err) {
+      toast.error("Failed to delete workout.");
     }
   };
 
@@ -40,61 +44,89 @@ function Dashboard() {
     fetchWorkouts();
   }, []);
 
+  const sortedWorkouts = [...workouts].sort((a, b) => {
+    const [field, direction] = sortOption.split("-");
+
+    if (field === "date") {
+      return direction === "asc"
+        ? new Date(a.date) - new Date(b.date)
+        : new Date(b.date) - new Date(a.date);
+    }
+
+    if (field === "name") {
+      return direction === "asc"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    }
+
+    if (["sets", "duration"].includes(field)) {
+      return direction === "asc"
+        ? (a[field] || 0) - (b[field] || 0)
+        : (b[field] || 0) - (a[field] || 0);
+    }
+
+    return 0;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      {/* Header */}
       <header className="flex justify-between items-center mb-6 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
       </header>
 
-      {/* Main Container */}
       <main className="max-w-3xl mx-auto space-y-6">
+        {/* Workout Form for adding */}
         <WorkoutForm onWorkoutAdded={fetchWorkouts} />
 
-        {/* Filter/Sort Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-2">
-            <label className="text-sm font-medium text-gray-700">Filter:</label>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="border border-gray-300 rounded p-2"
-            >
-              <option value="all">All</option>
-              <option value="strength">Strength</option>
-              <option value="cardio">Cardio</option>
-            </select>
-          </div>
-
-          <div className="flex gap-2">
-            <label className="text-sm font-medium text-gray-700">Sort:</label>
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="border border-gray-300 rounded p-2"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-          </div>
+        <div className="flex justify-end max-w-3xl mx-auto mb-4">
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="date-desc">Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="sets-asc">Sets (Low to High)</option>
+            <option value="sets-desc">Sets (High to Low)</option>
+            <option value="duration-asc">Duration (Short to Long)</option>
+            <option value="duration-desc">Duration (Long to Short)</option>
+          </select>
         </div>
 
-        {/* Workouts List */}
-        <section className="mt-6">
+        {/* Workout List */}
+        <section>
           {loading ? (
             <p className="text-center text-gray-500">Loading workouts...</p>
           ) : workouts.length === 0 ? (
             <p className="text-center text-gray-400">No workouts yet.</p>
           ) : (
             <ul className="space-y-4">
-              {filteredWorkouts.map((w) => (
+              {sortedWorkouts.map((w) => (
                 <li
                   key={w._id}
                   className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
                 >
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    {w.name}{" "}
-                    <span className="text-sm text-gray-500">({w.type})</span>
+                  <h2 className="text-lg font-semibold text-gray-800 flex justify-between items-center">
+                    <span>
+                      {w.name}{" "}
+                      <span className="text-sm text-gray-500">({w.type})</span>
+                    </span>
+                    <span className="space-x-2">
+                      <button
+                        onClick={() => setEditingWorkout(w)}
+                        className="text-blue-600 text-sm hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(w._id)}
+                        className="text-red-600 text-sm hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </span>
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
                     {w.type === "strength"
@@ -110,6 +142,14 @@ function Dashboard() {
           )}
         </section>
       </main>
+
+      {/* Edit Modal */}
+      <EditWorkoutModal
+        isOpen={!!editingWorkout}
+        onClose={() => setEditingWorkout(null)}
+        workout={editingWorkout}
+        onUpdated={fetchWorkouts}
+      />
     </div>
   );
 }
