@@ -20,7 +20,7 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.log("Error in signup controller:", error.message);
+    console.log("Error in signup controller:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -39,7 +39,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "2h" } // Token expiration time
     );
 
     res.status(200).json({
@@ -51,6 +51,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log("Error in login controller:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
