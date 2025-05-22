@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -81,6 +81,15 @@ function Login() {
                 {errors.password.message}
               </p>
             )}
+            {/* Forgot Password Link */}
+            <p className="text-right text-sm mt-1">
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 hover:underline"
+              >
+                Forgot your password?
+              </Link>
+            </p>
           </div>
 
           {/* Submit */}
