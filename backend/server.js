@@ -18,6 +18,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/workouts", workoutRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the Fitness Tracker API!");
+});
+
 // Connect to MongoDB and start server
 mongoose
   .connect(process.env.MONGO_URI, {})
