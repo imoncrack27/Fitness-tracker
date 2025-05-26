@@ -1,106 +1,53 @@
-Fitness Tracker App
-A full-stack fitness tracking web application built with React, Node.js, and MongoDB.
-Users can register, log workouts, view workout history, and track progress — all in a sleek, responsive UI.
+# Fitness Tracker App
 
-🚀 Features
-User authentication (register/login) with JWT tokens
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![Vercel](https://img.shields.io/badge/deployed-vercel-blue) ![Render](https://img.shields.io/badge/backend-render-orange) ![License](https://img.shields.io/badge/license-MIT-blue) ![React](https://img.shields.io/badge/frontend-react-61DAFB?logo=react&logoColor=white) ![Node.js](https://img.shields.io/badge/backend-node.js-339933?logo=node.js&logoColor=white) ![MongoDB](https://img.shields.io/badge/database-mongodb-47A248?logo=mongodb&logoColor=white)
 
-Create, read, update, and delete workouts
+A full-stack fitness tracking web application with user authentication, workout CRUD operations, and progress tracking.
 
-Track workout types, duration, and date
+---
 
-Responsive design with React and Tailwind CSS
+## 📋 Table of Contents
 
-RESTful API backend using Node.js, Express, and MongoDB
+- [Features](#-features)
+- [Demo](#-demo)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Environment Variables](#-environment-variables)
+- [Getting Started](#-getting-started)
+- [Deployment](#-deployment)
+- [API Reference](#-api-reference)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
-Deployment-ready with frontend on Vercel and backend on Render
+---
 
-🔧 Technologies Used
-Frontend: React, React Router, Axios, Tailwind CSS, Vite
+## 🚀 Features
 
-Backend: Node.js, Express, MongoDB, Mongoose
+- User authentication with JWT (register/login/logout)
+- Full CRUD for workouts (create, view, update, delete)
+- Responsive UI built with React and Tailwind CSS
+- Real-time form validation and error handling
+- Notifications with React Hot Toast
+- Secure REST API with Express and MongoDB
+- Deployed on Vercel (frontend) and Render (backend)
 
-Deployment: Vercel (frontend), Render (backend)
+---
 
-Authentication: JWT (JSON Web Tokens)
+## 🎥 Demo
 
-Others: React Hot Toast for notifications
+![App Screenshot 1](https://user-images.githubusercontent.com/yourusername/screenshot1.png)  
+_User dashboard showing workout summary_
 
-📁 Project Structure
-bash
-Copy
-Edit
-frontend/ # React frontend app
-backend/ # Express backend API
-⚙️ Environment Variables
-Frontend (frontend/.env)
-env
-Copy
-Edit
-VITE_API_URL=https://your-backend-url.onrender.com/api
-Backend (backend/.env)
-env
-Copy
-Edit
-PORT=5000
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your_jwt_secret_key
-💻 Running Locally
-Backend
-Navigate to backend folder:
+![App Screenshot 2](https://user-images.githubusercontent.com/yourusername/screenshot2.png)  
+_Workout creation form with validation_
 
-bash
-Copy
-Edit
-cd backend
-Install dependencies:
+---
 
-bash
-Copy
-Edit
-npm install
-Run the server:
+## 🔧 Tech Stack
 
-bash
-Copy
-Edit
-npm run dev
-Frontend
-Navigate to frontend folder:
-
-bash
-Copy
-Edit
-cd frontend
-Install dependencies:
-
-bash
-Copy
-Edit
-npm install
-Run the frontend:
-
-bash
-Copy
-Edit
-npm run dev
-📦 Deployment
-Frontend deployed on Vercel — auto-deploys from frontend/ folder
-
-Backend deployed on Render — Node.js API server
-
-📄 API Endpoints
-Method Endpoint Description
-POST /api/auth/register Register new user
-POST /api/auth/login Login user
-GET /api/workouts Get all workouts for user
-POST /api/workouts Create a new workout
-PUT /api/workouts/:id Update a workout
-DELETE /api/workouts/:id Delete a workout
-
-🤝 Contribution
-Feel free to fork the repo and submit pull requests! Open issues if you find bugs or want new features.
-
-📞 Contact
-Your Name — [mingo.drexell@example.com]
-Project Link: https://your-frontend-url.vercel.app
+| Layer    | Technology                |
+| -------- | ------------------------- |
+| Frontend | React, Vite, Tailwind CSS |
+| Backend  | Node.js, Express          |
