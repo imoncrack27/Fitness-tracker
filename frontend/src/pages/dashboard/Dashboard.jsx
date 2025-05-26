@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/authContext";
 import WorkoutForm from "../../components/WorkoutForm";
 import EditWorkoutModal from "../../components/EditWorkoutModal"; // <-- Import modal
 import toast from "react-hot-toast";

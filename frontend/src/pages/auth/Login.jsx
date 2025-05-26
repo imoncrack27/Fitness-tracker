@@ -4,7 +4,7 @@ import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/authContext";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email"),
