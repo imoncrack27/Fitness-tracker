@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
